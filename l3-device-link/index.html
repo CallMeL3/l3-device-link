@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#0b1020" />
+  <meta name="description" content="L3 Device Link — connect your devices, move files and share screens." />
+  <title>L3 Device Link</title>
+  <link rel="manifest" href="manifest.webmanifest" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar">
+      <a class="brand" href="#" aria-label="L3 Device Link home">
+        <span class="brand-mark">L3</span><span><b>DEVICE LINK</b><small>ONE WORLD. ALL DEVICES.</small></span>
+      </a>
+      <nav>
+        <button class="nav-item active" data-view="overview"><span>▦</span> Overview</button>
+        <button class="nav-item" data-view="devices"><span>▣</span> My devices</button>
+        <button class="nav-item" data-view="transfer"><span>⇄</span> File transfer</button>
+        <button class="nav-item" data-view="sharing"><span>▤</span> Screen sharing</button>
+        <button class="nav-item" data-view="remote"><span>⌘</span> Remote control</button>
+      </nav>
+      <div class="sidebar-bottom">
+        <div class="secure-note"><span class="status-dot"></span><div><b>Privacy first</b><small>Connections require your approval.</small></div></div>
+        <div class="profile"><div class="avatar">L3</div><div><b>L3 Workspace</b><small>Personal account</small></div><span class="dots">•••</span></div>
+      </div>
+    </aside>
+
+    <main class="main">
+      <header class="topbar">
+        <div><span class="eyebrow">WORKSPACE / <span id="crumb">OVERVIEW</span></span><h1 id="page-title">Your connected world.</h1></div>
+        <div class="top-actions"><span class="online-pill"><i></i> Local preview</span><button class="primary small" id="open-pair">＋ Add device</button></div>
+      </header>
+
+      <section class="view active" id="overview">
+        <div class="hero">
+          <div class="hero-copy"><span class="tag">L3 DEVICE LINK · EARLY ACCESS</span><h2>Everything works<br/><em>better together.</em></h2><p>Bring your phone, tablet and computer into one connected workspace.</p><button class="primary" id="hero-pair">Connect a device <span>→</span></button></div>
+          <div class="orbit" aria-hidden="true"><div class="orbit-ring ring-one"></div><div class="orbit-ring ring-two"></div><div class="orbit-core">L3</div><div class="orbit-node node-a">▣</div><div class="orbit-node node-b">▤</div><div class="orbit-node node-c">▱</div></div>
+        </div>
+        <div class="section-heading"><div><span class="eyebrow">YOUR WORKSPACE</span><h3>Quick access</h3></div><span class="muted">Prototype dashboard</span></div>
+        <div class="feature-grid">
+          <button class="feature-card" data-go="transfer"><span class="feature-icon violet">⇄</span><b>Send files</b><small>Prepare photos, videos and documents for transfer.</small><span class="card-arrow">↗</span></button>
+          <button class="feature-card" data-go="sharing"><span class="feature-icon blue">▤</span><b>Share a screen</b><small>Start a screen-sharing session when supported.</small><span class="card-arrow">↗</span></button>
+          <button class="feature-card" data-go="devices"><span class="feature-icon green">▣</span><b>Manage devices</b><small>See devices paired with this workspace.</small><span class="card-arrow">↗</span></button>
+        </div>
+        <div class="section-heading"><div><span class="eyebrow">GETTING STARTED</span><h3>Build status</h3></div></div>
+        <div class="status-card"><div class="status-line"><span class="status-icon">✓</span><div><b>Project interface created</b><small>Responsive dashboard and navigation are ready.</small></div><span class="state done">READY</span></div><div class="status-line"><span class="status-icon">2</span><div><b>Secure device pairing</b><small>Next: add a signaling service and real QR-based pairing.</small></div><span class="state planned">NEXT</span></div><div class="status-line"><span class="status-icon">3</span><div><b>Live transfer and screen sharing</b><small>Implement and test WebRTC between two devices.</small></div><span class="state planned">PLANNED</span></div></div>
+      </section>
+
+      <section class="view" id="devices">
+        <div class="section-heading"><div><span class="eyebrow">DEVICE NETWORK</span><h3>My devices</h3><p class="muted">Devices will appear here after real pairing is implemented.</p></div><button class="primary small" id="device-pair">＋ Pair device</button></div>
+        <div class="empty-state"><div class="empty-icon">▣</div><h3>No devices paired yet</h3><p>Your device list is empty. Pairing in this starter build is a UI preview; no device has been connected.</p><button class="secondary" id="empty-pair">Set up a device</button></div>
+      </section>
+
+      <section class="view" id="transfer">
+        <div class="section-heading"><div><span class="eyebrow">SHARE BETWEEN DEVICES</span><h3>File transfer</h3><p class="muted">Choose files to stage locally. They are not uploaded or sent in this preview.</p></div></div>
+        <label class="drop-zone" id="drop-zone"><input id="file-input" type="file" multiple /><span class="upload-icon">↑</span><b>Drop files here or <u>browse files</u></b><small>Photos, videos and documents · Local preview only</small></label>
+        <div id="file-list" class="file-list"></div>
+        <div class="notice"><b>Transfer status:</b> Local staging only. A secure peer connection is required before files can be sent to another device.</div>
+      </section>
+
+      <section class="view" id="sharing">
+        <div class="section-heading"><div><span class="eyebrow">LIVE COLLABORATION</span><h3>Screen sharing</h3><p class="muted">Share this browser tab or screen after a peer connection is added.</p></div></div>
+        <div class="empty-state"><div class="empty-icon">▤</div><h3>Ready when you are</h3><p>Live screen sharing requires a secure context (HTTPS or localhost), browser support and a connected peer.</p><button class="secondary" id="share-screen">Check screen-share support</button><p class="feedback" id="share-feedback" aria-live="polite"></p></div>
+      </section>
+
+      <section class="view" id="remote">
+        <div class="section-heading"><div><span class="eyebrow">CONSENT-BASED ACCESS</span><h3>Remote control</h3><p class="muted">Remote input is not enabled in this starter build.</p></div></div>
+        <div class="notice warning"><b>Designed for safety:</b> Remote control will require explicit approval on the device being controlled, a visible session indicator, and an immediate disconnect option. Browser and iOS restrictions may limit available controls.</div>
+        <div class="empty-state"><div class="empty-icon">⌘</div><h3>No active remote sessions</h3><p>We will add supported remote actions after secure pairing is working.</p></div>
+      </section>
+    </main>
+  </div>
+
+  <dialog id="pair-dialog">
+    <form method="dialog" class="dialog-content">
+      <button class="close" aria-label="Close">×</button>
+      <span class="eyebrow">NEW CONNECTION</span><h2>Link a device</h2>
+      <p class="muted">This is a visual pairing preview. It does not establish a real connection yet.</p>
+      <label class="field-label" for="device-name">Give your device a name</label><input id="device-name" class="text-input" placeholder="e.g. My Android phone" maxlength="40" />
+      <label class="field-label" for="device-type">Device type</label><select id="device-type" class="text-input"><option>Android phone</option><option>iPhone</option><option>Windows PC</option><option>Mac</option><option>Linux computer</option><option>Chromebook</option><option>Tablet</option></select>
+      <div class="pair-code"><small>DEMO PAIRING CODE</small><strong id="pair-code">— — — — — —</strong><span>Demo only · Not a secure authentication code</span></div>
+      <button class="primary full" id="generate-code" type="button">Generate demo code</button>
+      <p class="feedback" id="pair-feedback" aria-live="polite"></p>
+    </form>
+  </dialog>
+  <script src="app.js"></script>
+</body>
+</html>
