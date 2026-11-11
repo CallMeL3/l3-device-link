@@ -74,18 +74,90 @@
     </main>
   </div>
 
-  <dialog id="pair-dialog">
-    <form method="dialog" class="dialog-content">
-      <button class="close" aria-label="Close">×</button>
-      <span class="eyebrow">NEW CONNECTION</span><h2>Link a device</h2>
-      <p class="muted">This is a visual pairing preview. It does not establish a real connection yet.</p>
-      <label class="field-label" for="device-name">Give your device a name</label><input id="device-name" class="text-input" placeholder="e.g. My Android phone" maxlength="40" />
-      <label class="field-label" for="device-type">Device type</label><select id="device-type" class="text-input"><option>Android phone</option><option>iPhone</option><option>Windows PC</option><option>Mac</option><option>Linux computer</option><option>Chromebook</option><option>Tablet</option></select>
-      <div class="pair-code"><small>DEMO PAIRING CODE</small><strong id="pair-code">— — — — — —</strong><span>Demo only · Not a secure authentication code</span></div>
-      <button class="primary full" id="generate-code" type="button">Generate demo code</button>
-      <p class="feedback" id="pair-feedback" aria-live="polite"></p>
-    </form>
-  </dialog>
+ 
+<dialog id="pair-dialog">
+  <form method="dialog" class="dialog-content">
+    <button class="close" aria-label="Close">×</button>
+    <span class="eyebrow">NEW CONNECTION</span>
+    <h2>Link a device</h2>
+    <p class="muted">Connect another device using a pairing code.</p>
+
+    <label class="field-label" for="device-name">Give your device a name</label>
+    <input id="device-name" class="text-input" placeholder="e.g. My Android phone" maxlength="40" />
+
+    <label class="field-label" for="device-type">Device type</label>
+    <select id="device-type" class="text-input">
+      <option>Android phone</option>
+      <option>iPhone</option>
+      <option>Windows PC</option>
+      <option>Mac</option>
+      <option>Linux computer</option>
+      <option>Chromebook</option>
+      <option>Tablet</option>
+    </select>
+
+    <div class="pair-code">
+      <small>PAIRING CODE</small>
+      <strong id="pair-code">— — — — — —</strong>
+      <span>Share this code with your other device.</span>
+    </div>
+
+    <button class="primary full" id="generate-code" type="button">
+      Create pairing code
+    </button>
+
+    <div class="section-heading">
+      <h3>Join another device</h3>
+    </div>
+
+    <label class="field-label" for="join-code">Enter its six-digit code</label>
+    <input id="join-code" class="text-input" placeholder="123456" maxlength="6" inputmode="numeric" />
+
+    <button class="secondary full" id="join-device" type="button">
+      Join device
+    </button>
+
+    <p class="feedback" id="pair-feedback" aria-live="polite"></p>
+  </form>
+</dialog>
+
   <script src="app.js"></script>
+
+<section class="device-status">
+  <h2>Connected Devices</h2>
+  <div id="connected-devices">
+    <p>No devices connected yet.</p>
+  </div>
+</section>
+
 </body>
 </html>
+
+
+// Join an existing L3 Device Link room
+document.getElementById("join-device").addEventListener("click", () => {
+  const code = document.getElementById("join-code").value.trim();
+  const feedback = document.getElementById("pair-feedback");
+
+  if (!/^\d{6}$/.test(code)) {
+    feedback.textContent = "Please enter a valid six-digit code.";
+    return;
+  }
+
+  function joinRoom() {
+    pairingSocket.send(JSON.stringify({
+      type: "join-room",
+      code: code
+    }));
+  }
+
+  if (pairingSocket && pairingSocket.readyState === WebSocket.OPEN) {
+    joinRoom();
+  } else {
+    feedback.textContent = "Connecting to the pairing server...";
+
+    connectPairingServer();
+
+    pairingSocket.addEventListener("open", joinRoom, { once: true });
+  }
+});

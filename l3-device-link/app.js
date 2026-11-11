@@ -36,3 +36,122 @@ document.getElementById("share-screen").addEventListener("click",()=>{
   const supported=!!(navigator.mediaDevices&&navigator.mediaDevices.getDisplayMedia);
   document.getElementById("share-feedback").textContent=!secure?"Screen sharing needs HTTPS or localhost.":supported?"This browser supports screen capture. Peer streaming is not implemented yet.":"Screen capture is not supported in this browser.";
 });
+
+
+// L3 Device Link - live pairing connection
+const SERVER_URL = "wss://fictional-couscous-w9g49p7p64w3gp75-3000.app.github.dev";
+
+let pairingSocket = null;
+
+function connectPairingServer() {
+  pairingSocket = new WebSocket(SERVER_URL);
+
+  pairingSocket.addEventListener("open", () => {
+    console.log("Connected to L3 pairing server.");
+    document.getElementById("pair-feedback").textContent =
+      "Connected to the pairing server.";
+  });
+
+  pairingSocket.addEventListener("message", (event) => {
+    const message = JSON.parse(event.data);
+
+    if (message.type === "room-created") {
+      document.getElementById("pair-code").textContent = message.code;
+      document.getElementById("pair-feedback").textContent =
+        "Pairing code created. Enter it on your other device.";
+    }
+
+    if (message.type === "room-joined") {
+      document.getElementById("pair-feedback").textContent =
+        "Successfully joined the device room.";
+    }
+
+   
+if (message.type === "peer-joined") {
+  document.getElementById("pair-feedback").textContent =
+    "Another device has joined!";
+
+  document.getElementById("connected-devices").textContent =
+    "This device: Online | Another device: Online";
+}
+
+if (message.type === "room-joined") {
+  document.getElementById("pair-feedback").textContent =
+    "Successfully joined the device room.";
+
+  document.getElementById("connected-devices").textContent =
+    "This device: Online | Another device: Online";
+}
+
+if (message.type === "peer-left") {
+  document.getElementById("connected-devices").textContent =
+    "This device: Online | Another device: Offline";
+}
+
+
+    if (message.type === "error") {
+      document.getElementById("pair-feedback").textContent = message.message;
+    }
+  });
+
+  pairingSocket.addEventListener("error", () => {
+    document.getElementById("pair-feedback").textContent =
+      "Could not connect to the pairing server.";
+  });
+}
+
+document.getElementById("generate-code").addEventListener("click", () => {
+  if (!pairingSocket || pairingSocket.readyState !== WebSocket.OPEN) {
+    connectPairingServer();
+
+    pairingSocket.addEventListener("open", () => {
+      pairingSocket.send(JSON.stringify({ type: "create-room" }));
+    }, { once: true });
+
+    return;
+  }
+
+  pairingSocket.send(JSON.stringify({ type: "create-room" }));
+});
+
+
+// Join an existing L3 Device Link room
+document.getElementById("join-device").addEventListener("click", () => {
+  const code = document.getElementById("join-code").value.trim();
+  const feedback = document.getElementById("pair-feedback");
+
+  if (!/^\d{6}$/.test(code)) {
+    feedback.textContent = "Please enter a valid six-digit code.";
+    return;
+  }
+
+  function joinRoom() {
+    pairingSocket.send(JSON.stringify({
+      type: "join-room",
+      code: code
+    }));
+  }
+
+  if (pairingSocket && pairingSocket.readyState === WebSocket.OPEN) {
+    joinRoom();
+  } else {
+    feedback.textContent = "Connecting to the pairing server...";
+    connectPairingServer();
+    pairingSocket.addEventListener("open", joinRoom, { once: true });
+  }
+});
+
+
+
+// Register L3 Device Link service worker
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", () => {
+    navigator.serviceWorker.register("./sw.js")
+      .then(() => {
+        console.log("L3 app is ready to install.");
+      })
+      .catch((error) => {
+        console.error("Service worker registration failed:", error);
+      });
+  });
+}
