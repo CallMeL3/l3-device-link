@@ -155,3 +155,31 @@ if ("serviceWorker" in navigator) {
       });
   });
 }
+
+
+let deferredInstallPrompt;
+
+const installButton = document.getElementById("install-app");
+
+if (installButton) {
+  installButton.hidden = true;
+
+  window.addEventListener("beforeinstallprompt", (event) => {
+    event.preventDefault();
+    deferredInstallPrompt = event;
+    installButton.hidden = false;
+  });
+
+  installButton.addEventListener("click", async () => {
+    if (!deferredInstallPrompt) {
+      alert("Use your browser menu to install L3 Device Link.");
+      return;
+    }
+
+    deferredInstallPrompt.prompt();
+    await deferredInstallPrompt.userChoice;
+
+    deferredInstallPrompt = null;
+    installButton.hidden = true;
+  });
+}
