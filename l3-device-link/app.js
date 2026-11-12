@@ -162,7 +162,7 @@ let deferredInstallPrompt;
 const installButton = document.getElementById("install-app");
 
 if (installButton) {
-  installButton.hidden = true;
+  installButton.hidden = false;
 
   window.addEventListener("beforeinstallprompt", (event) => {
     event.preventDefault();
